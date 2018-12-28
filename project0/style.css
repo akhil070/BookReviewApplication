@@ -39,6 +39,13 @@
 		.Review#review-info{
 		display:inline-block;
 	}
+	.spread-video > video {
+  		width: 200%;
+  		margin-left: -50%;
+	}
+	.spread-video{
+  		overflow: hidden;
+	}
 }
 @media(max-width:600px){
 	lead{
@@ -80,5 +87,12 @@
 	}
 		.Review#review-info{
 		display:inline-block;
+	}
+	.spread-video > video {
+  		width: 200%;
+  		margin-left: -50%;
+	}
+	.spread-video{
+  		overflow: hidden;
 	}
 }
