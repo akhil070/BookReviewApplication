@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+<h2>Book information for ISBN: {{ message }}</h2>
+<ul>
+	<li>Title: {{ result[1] }}</li>
+	<li>Author: {{ result[3] }}</li>
+</ul>
+ <h5>The average rating on Goodreads is: {{ good_reads }}</h5>
+<h1>Add Review</h1>
+  {% from "helpers.html" import render_field %}</p>
+  <form method="POST" action="">
+    <div class="form-group">
+      <input class="form-control mr-sm-2" type="text" placeholder="Title(copy paste above Title)" name='title' aria-label="Search" value="{{request.form.title}}">
+    </div>
+    <div class="form-group">
+    	<textarea rows='5' cols='50' placeholder='Tell others what you think' class="form-control mr-sm-2" name='body' value="{{request.form.body}}"></textarea>
+    </div>
+    <div class="form-group">
+            Rating (between 1 and 5):  <input type="number" name="rating" min="1" max="5" default="0" value="{{request.form.rating}}" required>
+    </div>
+    <div class="form-group">
+            <button class="btn btn-primary">Submit</button>
+        </div>
+  </form>
+{% endblock %}

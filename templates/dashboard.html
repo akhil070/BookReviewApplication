@@ -1,0 +1,26 @@
+
+{% extends 'layout.html' %}
+
+{% block body %}
+<h2>Welcome {{session.username}}</h2>
+	<form class="form-inline my-2 my-lg-0" method="POST" action='/dashboard'>
+      <input class="form-control mr-sm-2" type="text" placeholder="Search" name='search' aria-label="Search" value="{{request.form.search}}">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+    <br>
+<div class="container">
+<table class="table table-dark table-hover">          
+    <thead>
+    <tbody>
+    	{% if not results %}
+    	<p>No results to display</p>
+    	{% endif %}
+{% for result in results %}
+      <tr>
+        <td><a href="{{url_for('review',isbn=result[0])}}">{{result}}</a></td>
+      </tr>
+{% endfor %}
+</tbody>
+  </table>
+</div>
+{% endblock %}

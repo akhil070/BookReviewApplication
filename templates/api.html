@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<p>
+	isbn:{{row[0]}}<br>
+	title:{{row[1]}}<br>
+	author:{{row[3]}}<br>
+	year:{{row[4]}}<br>
+    review_count:{{review_count}}<br>
+    average_score:{{average_score}}
+</p>
+{% endblock %}

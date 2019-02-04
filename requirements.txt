@@ -1,0 +1,11 @@
+Flask
+Flask-Session
+SQLAlchemy
+MySQl database
+
+goto MySQl folder of u have mysql workbench installed goto workbench import it in a database
+
+if you dont have mysql workbench load it manullay 
+
+
+
