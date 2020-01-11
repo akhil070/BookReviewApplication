@@ -3,7 +3,7 @@ from flaskext.mysql import MySQL
 from wtforms import *
 from passlib.hash import sha256_crypt
 from functools import wraps
-import secrets,os,requests
+import secrets,os,requests,re	
 
 app=Flask(__name__)
 
@@ -22,16 +22,23 @@ db=conn.cursor()
 
 goodreads_key=os.getenv('GOODREAD_KEY')
 
-
+def is_unique_name(form,field):
+	db.execute('select username from login where username=%s',[field.data])
+	row=db.fetchone()
+	if row is not None:
+		raise ValidationError("Username must be unique")
+	
 class RegisterForm(Form):
 		"""docstring for RegisterForm"""
 		name=StringField('Name',[validators.Length(min=5 ,max=40)])
-		username=StringField('Username',[validators.Length(min=5 ,max=40)])
+		username=StringField('Username',[validators.Length(min=5 ,max=40),is_unique_name])
 		password= PasswordField('Password',[
-			validators.DataRequired(),
-			validators.EqualTo('confirm',message="passwords don't match")])
-     			
+			validators.DataRequired(),validators.Length(min=5,max=20),
+			validators.regexp('^[0-9A-Za-z]+$',message='Must be a alphanumeric value'),
+			validators.EqualTo('confirm',message="passwords don't match")])	
 		confirm=PasswordField('Confirm Password')
+		
+
 #Home page
 @app.route('/')
 def index():
@@ -45,12 +52,12 @@ def register():
 		name=form.name.data 
 		username=form.username.data
 		password=sha256_crypt.hash(str(form.password.data))
-
+		
 		#executing query
 		db.execute('insert into login(name,username,password) values(%s, %s,%s)',(name,username,password))
-		#commit to db
+			#commit to db
 		conn.commit()
-		#closing connection to execution
+			#closing connection to execution
 		db.close()
 		conn.close()
 		flash('You are now registered and can log in','success')
@@ -67,16 +74,15 @@ def login():
 		username=request.form['username']
 		password_candidate=request.form['password']
 		cur=conn.cursor()
-		cur.execute('select * from login where username=%s',[username])
 			#Get stored hash
 		try:
-			if cur.fetchone()[0]:
-				cur.execute('select password from login where username=%s',[username])
-				for row in cur.fetchall():
+			if True:
+				cur.execute('select password from login where username=%s',(username))
+				for row in cur:
 					if sha256_crypt.verify(password_candidate,row[0]):
 						session['logged_in']=True
 						session['username']=username
-						flash=('You are now logged in','success')
+						flash('You are now logged in','success')
 						return redirect(url_for('dashboard'))
 					else:
 						error='Invalid login'
@@ -109,7 +115,7 @@ def dashboard():
 		query=query.lower().strip()
 		cur=conn.cursor()
 		#querying database using wildcard
-		cur.execute("select * from booklog where concat_ws('',isbn,title,author) like %s limit 100",(query))
+		cur.execute("select * from booklog where concat_ws('',isbn,title,author) like %s limit 200",(query))
 		results=cur.fetchall()
 		return render_template('dashboard.html',results=results)
 		cur.close()
